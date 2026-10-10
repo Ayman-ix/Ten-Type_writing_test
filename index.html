@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TenType — a typing speed test</title>
+  <meta name="description" content="A fast, minimal, keyboard-focused typing speed test. Track your WPM, accuracy, and progress over time." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#typingArea">Skip to typing test</a>
+
+  <div class="app">
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+      <a class="logo" href="#" data-action="go-home" aria-label="TenType, home">
+        <span class="logo-word">TenType</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <button type="button" class="nav-link is-active" data-view="test" aria-current="page">Typing test</button>
+        <button type="button" class="nav-link" data-view="stats">Statistics</button>
+        <button type="button" class="nav-link" data-view="about">About</button>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Switch to light theme" title="Toggle theme">
+          <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.7A8.5 8.5 0 0 1 9.3 3.5a.7.7 0 0 0-.9-.9A10 10 0 1 0 21.4 15.6a.7.7 0 0 0-.9-.9Z"/></svg>
+          <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="settingsToggle" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsDrawer" aria-label="Open settings" title="Settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 13a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V19a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.98 17.3a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.62 13a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.62 6.98a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 8.98 2.6a1.7 1.7 0 0 0 1.03-1.56V1a2 2 0 1 1 4 0v.09c0 .67.4 1.28 1.03 1.55.62.26 1.34.13 1.87-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06c-.46.53-.6 1.25-.34 1.87.26.63.87 1.03 1.55 1.03H21a2 2 0 1 1 0 4h-.09c-.68 0-1.29.4-1.56 1.03Z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ TEST VIEW ============ -->
+    <main id="view-test" class="view view-test" aria-labelledby="testHeading">
+      <h1 id="testHeading" class="visually-hidden">Typing speed test</h1>
+
+      <section class="test-config" id="testConfig" aria-label="Test configuration">
+        <div class="config-group" role="group" aria-label="Test mode">
+          <button type="button" class="chip is-active" data-mode="quote">quote</button>
+          <button type="button" class="chip" data-mode="words">words</button>
+        </div>
+
+        <div class="config-divider" aria-hidden="true"></div>
+
+        <div class="config-group" role="group" aria-label="Test duration">
+          <button type="button" class="chip" data-duration="15">15s</button>
+          <button type="button" class="chip is-active" data-duration="30">30s</button>
+          <button type="button" class="chip" data-duration="60">60s</button>
+          <button type="button" class="chip" data-duration="120">120s</button>
+          <div class="chip chip-custom" data-duration="custom">
+            <button type="button" class="chip-custom-label">custom</button>
+            <input type="number" id="customDurationInput" min="5" max="600" step="5" value="45" aria-label="Custom duration in seconds" />
+          </div>
+        </div>
+      </section>
+
+      <section class="stat-bar" id="statBar" aria-label="Live results">
+        <div class="stat">
+          <span class="stat-value" id="statWpm">0</span>
+          <span class="stat-label">wpm</span>
+        </div>
+        <div class="stat-sep" aria-hidden="true"></div>
+        <div class="stat">
+          <span class="stat-value" id="statAccuracy">100%</span>
+          <span class="stat-label">accuracy</span>
+        </div>
+        <div class="stat-sep" aria-hidden="true"></div>
+        <div class="stat">
+          <span class="stat-value" id="statMistakes">0</span>
+          <span class="stat-label">mistakes</span>
+        </div>
+        <div class="stat-sep" aria-hidden="true"></div>
+        <div class="stat">
+          <span class="stat-value" id="statTime">30s</span>
+          <span class="stat-label">time</span>
+        </div>
+      </section>
+
+      <section class="typing-stage" id="typingStage" aria-label="Typing area">
+        <div class="typing-viewport" id="typingArea" tabindex="0" role="textbox" aria-multiline="false" aria-roledescription="typing test text" aria-label="Typing test. Click or press Enter, then begin typing to start the test.">
+          <div class="typing-track" id="typingTrack"><!-- words injected by JS --></div>
+          <div class="caret" id="caret" aria-hidden="true"></div>
+        </div>
+        <input type="text" id="hiddenInput" class="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-hidden="true" tabindex="-1" />
+        <p class="typing-hint" id="typingHint">click the text, or press <kbd>enter</kbd>, then just start typing</p>
+      </section>
+
+      <div class="test-actions" id="liveTestActions">
+        <button type="button" class="btn-restart" id="restartBtn" aria-label="Restart test">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5.5 15a8 8 0 0 0 13.9 2.6M18.5 9A8 8 0 0 0 4.6 6.4"/></svg>
+          <span>restart</span>
+          <kbd>tab</kbd>
+        </button>
+      </div>
+
+      <!-- ============ RESULTS ============ -->
+      <section class="results" id="results" hidden aria-live="polite" aria-label="Test results">
+        <p class="results-badge" id="resultsBadge" hidden>new personal best</p>
+        <div class="results-primary">
+          <div class="results-figure">
+            <span class="results-number" id="resultWpm">0</span>
+            <span class="results-unit">wpm</span>
+          </div>
+          <div class="results-figure results-figure--sub">
+            <span class="results-number" id="resultAccuracy">0%</span>
+            <span class="results-unit">accuracy</span>
+          </div>
+        </div>
+
+        <dl class="results-detail">
+          <div><dt>raw wpm</dt><dd id="resultRawWpm">0</dd></div>
+          <div><dt>correct chars</dt><dd id="resultCorrect">0</dd></div>
+          <div><dt>incorrect chars</dt><dd id="resultIncorrect">0</dd></div>
+          <div><dt>words typed</dt><dd id="resultWords">0</dd></div>
+          <div><dt>time</dt><dd id="resultTime">0s</dd></div>
+        </dl>
+
+        <div class="test-actions">
+          <button type="button" class="btn-restart" id="tryAgainBtn">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5.5 15a8 8 0 0 0 13.9 2.6M18.5 9A8 8 0 0 0 4.6 6.4"/></svg>
+            <span>try again</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ STATISTICS VIEW ============ -->
+    <section id="view-stats" class="view view-stats" hidden aria-labelledby="statsHeading">
+      <h1 id="statsHeading">Statistics</h1>
+      <p class="view-sub">Everything below is stored locally in this browser.</p>
+
+      <div class="summary-grid" id="summaryGrid">
+        <div class="summary-cell"><span class="summary-value" id="sumBestWpm">–</span><span class="summary-label">best wpm</span></div>
+        <div class="summary-cell"><span class="summary-value" id="sumAvgWpm">–</span><span class="summary-label">average wpm</span></div>
+        <div class="summary-cell"><span class="summary-value" id="sumBestAccuracy">–</span><span class="summary-label">best accuracy</span></div>
+        <div class="summary-cell"><span class="summary-value" id="sumTestsCompleted">–</span><span class="summary-label">tests completed</span></div>
+        <div class="summary-cell"><span class="summary-value" id="sumTotalWords">–</span><span class="summary-label">total words typed</span></div>
+        <div class="summary-cell"><span class="summary-value" id="sumTotalChars">–</span><span class="summary-label">total characters</span></div>
+      </div>
+
+      <h2 class="history-heading">Recent tests</h2>
+      <div class="history-table-wrap">
+        <table class="history-table" id="historyTable">
+          <thead>
+            <tr><th scope="col">when</th><th scope="col">mode</th><th scope="col">wpm</th><th scope="col">accuracy</th><th scope="col">time</th></tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+        <p class="empty-state" id="historyEmpty" hidden>No tests yet. Finish a test to see it here.</p>
+      </div>
+
+      <button type="button" class="btn-text" id="clearHistoryBtn">Clear history</button>
+    </section>
+
+    <!-- ============ ABOUT VIEW ============ -->
+    <section id="view-about" class="view view-about" hidden aria-labelledby="aboutHeading">
+      <h1 id="aboutHeading">About TenType</h1>
+      <p>TenType is a minimal, keyboard-first typing test. Pick a duration, start typing, and watch your words‑per‑minute and accuracy update as you go — no clicking required once you've started.</p>
+      <p>Your results and personal bests are kept on this device only, using your browser's local storage. Nothing is uploaded anywhere in this version.</p>
+      <h2>Shortcuts</h2>
+      <ul class="shortcut-list">
+        <li><kbd>tab</kbd> restart with a new passage</li>
+        <li><kbd>esc</kbd> reset the current test</li>
+        <li><kbd>ctrl</kbd> / <kbd>cmd</kbd> + <kbd>enter</kbd> restart</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- ============ SETTINGS DRAWER ============ -->
+  <div class="drawer-overlay" id="drawerOverlay" hidden></div>
+  <aside class="drawer" id="settingsDrawer" role="dialog" aria-modal="true" aria-labelledby="settingsHeading" hidden>
+    <div class="drawer-head">
+      <h2 id="settingsHeading">Settings</h2>
+      <button type="button" class="icon-btn" id="closeSettingsBtn" aria-label="Close settings">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <fieldset class="setting-block">
+        <legend>Theme</legend>
+        <div class="segmented" role="radiogroup" aria-label="Theme">
+          <button type="button" class="segment is-active" data-setting-theme="dark" role="radio" aria-checked="true">dark</button>
+          <button type="button" class="segment" data-setting-theme="light" role="radio" aria-checked="false">light</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="setting-block">
+        <legend>Default duration</legend>
+        <div class="segmented" role="radiogroup" aria-label="Default test duration">
+          <button type="button" class="segment" data-setting-duration="15" role="radio" aria-checked="false">15s</button>
+          <button type="button" class="segment is-active" data-setting-duration="30" role="radio" aria-checked="true">30s</button>
+          <button type="button" class="segment" data-setting-duration="60" role="radio" aria-checked="false">60s</button>
+          <button type="button" class="segment" data-setting-duration="120" role="radio" aria-checked="false">120s</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="setting-block">
+        <legend for="fontSizeRange">Typing text size</legend>
+        <div class="range-row">
+          <label class="visually-hidden" for="fontSizeRange">Typing text size</label>
+          <input type="range" id="fontSizeRange" min="1" max="5" step="1" value="3" />
+          <span id="fontSizeValue">medium</span>
+        </div>
+      </fieldset>
+
+      <fieldset class="setting-block">
+        <legend>Sound</legend>
+        <div class="segmented" role="radiogroup" aria-label="Sound">
+          <button type="button" class="segment is-active" data-setting-sound="on" role="radio" aria-checked="true">on</button>
+          <button type="button" class="segment" data-setting-sound="off" role="radio" aria-checked="false">off</button>
+        </div>
+      </fieldset>
+
+      <button type="button" class="btn-text" id="resetSettingsBtn">Reset settings to default</button>
+    </div>
+  </aside>
+
+  <div class="live-region visually-hidden" id="liveRegion" aria-live="polite"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/textGenerator.js"></script>
+  <script src="js/typingEngine.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/statistics.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
